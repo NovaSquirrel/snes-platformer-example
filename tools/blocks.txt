@@ -1,0 +1,267 @@
+# Solid colors, 1 row   --> 512*1 -->  512 | $0000
+# Green/brown is 6 rows --> 512*6 --> 3072 | $0200
+# Yellow/blue is 4 rows --> 512*4 --> 2048 | $0e00
+# Red is 2 rows         --> 512*2 --> 1024 | $1600
+alias green_gfx $0200
+alias yellow_gfx $0e00
+alias red_gfx $1600
+
+alias green_palette  0
+alias yellow_palette 1
+alias red_palette    2
+
+#######################################
+# Miscellaneous
+#######################################
+
+base green_gfx
+palette green_palette
+
++Empty
+t 0:0 0:0
+t 0:0 0:0
+
++Bricks
+when Below, BlockBricks
+solid
+q 6,0
+
++BricksPrize
+when Below, BlockPrize
+solid
+q 6,0
+
++Spikes
+when Above, BlockSpikes
+solid
+t 8,4 8,4
+t 8,5 8,5
+
++DoorTop
+t 0:0 0:0
+t 6,4 7,4
+
++Door
+when InsideBody, BlockDoor
+t 6,5 7,5
+t 6,5 7,5
+
++LadderTop
+solid_top
+when InsideBody, BlockLadder
+when Above, BlockLadderTop
+q 8,0
+
++Ladder
+when InsideBody, BlockLadder
+t 8,1 9,1
+t 8,1 9,1
+
++RopeTop
+solid_top
+when InsideBody, BlockLadder
+when Above, BlockLadderTop
+q 10,0
+
++Rope
+when InsideBody, BlockLadder
+t 10,1 11,1
+t 10,1 11,1
+
+base yellow_gfx
+palette yellow_palette
+
++Prize
+when Below, BlockPrize
+solid
+q 0,0
+
++PrizeAnimation
+solid
+q 2,0
+
++UsedPrize
+solid
+q 4,0
+
++Money
+when Touch, BlockMoney
+class Collectible
+q 6,0
+
+base red_gfx
+palette red_palette
+
++SolidBlock
+solid
+q 0,0
+
++HealthItem
+when Touch, BlockHeart
+class Collectible
+q 2,0
+
++Spring
+solid
+when Above, BlockSpring
+q 4,0
+
++SpringPressedHalf
+solid
+q 6,0
+
++SpringPressed
+solid
+q 8,0
+
+#######################################
+# Platforms
+#######################################
+
+base green_gfx
+palette green_palette
+
++Platform
+solid_top
+q 9,4
+
++PlatformLeft
+solid_top
+q 0,0
+
++PlatformMiddle
+solid_top
+q 2,0
+
++PlatformRight
+solid_top
+q 4,0
+
+#######################################
+# Terrain
+#######################################
+base green_gfx
+palette green_palette
+
++Ledge
+solid_top
+q 2,0
+
++LedgeLeft
+solid_top
+t 4,5 3,0
+t 2,1 3,1
+
++LedgeRight
+solid_top
+t 2,0 5,5
+t 2,1 3,1
+
++Dirt
+t 2,1 3,1
+t 2,1 3,1
+
++DirtLeft
+t 0,4 3,1
+t 0,1 1,1
+
++DirtRight
+t 2,1 4,5
+t 4,1 5,1
+
++SlopeLeft
+t 0:0 1,4
+t 0,5 1,5
+
++SlopeRight
+t 2,4 0:0
+t 2,5 3,5
+
++SlopeLeftBelow
+t 4,4 3,1
+t 2,1 3,1
+
++SlopeRightBelow
+t 2,1 5,4
+t 2,1 3,1
+
+#######################################
+# Keys and locks
+#######################################
+
+base red_gfx
+palette red_palette
+
++LockRed
+solid
+q 12,0
+
++KeyRed
+q 10,0
+
+base green_gfx
+palette green_palette
+
++LockGreen
+solid
+q 14,0
+
++KeyGreen
+q 12,0
+
+base yellow_gfx
+palette yellow_palette
+
++LockBlue
+solid
+q 14,0
+
++KeyBlue
+q 12,0
+
++LockYellow
+solid
+q 10,0
+
++KeyYellow
+q 8,0
+
+#######################################
+# Level Decorations
+#######################################
+
+base green_gfx
+palette green_palette
+
++BushLeft
+q 4,2
+
++BushRight
+q 6,2
+
++SmallBush
+q 2,2
+
++GrassTuft
+q 0,2
+
++SignExit
+q 12,2
+
++SignExclamation
+q 14,2
+
++SignLeft
+q 8,2
+
++SignRight
+q 10,2
+
+base yellow_gfx
+palette yellow_palette
+
++WaterTop
+q 0,2
+
++Water
+q 2,2

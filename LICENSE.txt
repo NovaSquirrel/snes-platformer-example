@@ -1,4 +1,4 @@
-MIT License
+SNES platformer example
 
 Copyright (c) 2022 NovaSquirrel
 

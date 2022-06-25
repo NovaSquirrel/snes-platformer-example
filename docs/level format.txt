@@ -1,0 +1,40 @@
+.---------------------------------------
+| Level header
+'---------------------------------------
+
+0        1        2        3
+MMMMMMMM XXXXXXXX ...YYYYY ........
+M = Background music
+X = Starting X position
+Y = Starting Y position
+
+4        5
+gggrrrrr .bbbbbgg
+RGB Level background color
+
+6        7       
+ssssssss SSSSSSSS
+s = Low byte of actor list pointer
+S = High byte of actor list pointer
+
+8        9
+llllllll LLLLLLLL
+l = Low byte of level data pointer
+L = High byte of level data pointer
+
+.---------------------------------------
+| Level data
+'---------------------------------------
+
+Level is a series of block IDs from top to bottom, left to right
+
+.---------------------------------------
+| Actor data
+'---------------------------------------
+XXXXXXXX D..YYYYY tttttttt abcdTTTT
+tT - Actor number (T is higher bits)
+D - direction (1 is left)
+abcd - misc actor information
+X - X position (0-255) (or Y position for vertical levels)
+Y - Y position (0-31)  (or X position for vertical levels)
+List ends in $ff (so you can't put anything on the rightmost column)

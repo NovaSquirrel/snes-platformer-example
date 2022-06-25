@@ -1,0 +1,23 @@
+.enum PlayerFrame
+  IDLE
+  WALK1
+  WALK2
+  WALK3
+  WALK4
+  WALK5
+  WALK6
+  WALK7
+  WALK8
+  RUN1
+  RUN2
+  RUN3
+  RUN4
+  RUN5
+  RUN6
+  RUN7
+  RUN8
+  JUMP
+  FALL
+  CLIMB1
+  CLIMB2
+.endenum

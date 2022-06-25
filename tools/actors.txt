@@ -1,0 +1,65 @@
+# This is the list of entities in the game, automatically inserted and formatted.
+# The "Empty" entity type is created automatically, no need to specify here.
+
++Walker
+run RunWalker
+draw DrawWalker
+size 16x16
+
++LedgeWalker
+run RunLedgeWalker
+draw DrawLedgeWalker
+size 16x16
+
++Shooter
+run RunShooter
+draw DrawShooter
+size 16x16
+
++Jumper
+run RunJumper
+draw DrawJumper
+size 16x16
+
++EnemyBullet
+run RunEnemyBullet
+draw DrawEnemyBullet
+size 8x8
+
++MovingPlatformHorizontal
+essential
+run RunMovingPlatformHorizontal
+draw DrawMovingPlatform
+size 32x8
+
++MovingPlatformVertical
+essential
+run RunMovingPlatformVertical
+draw DrawMovingPlatform
+size 32x8
+
++PlayerProjectile
+run RunPlayerProjectile
+draw DrawPlayerProjectile
+size 8x8
+
+# ---------- particles ----------
++Poof
+particle
+run RunPoofParticle
+draw DrawPoofParticle
+
++PrizeParticle
+particle
+run RunPrizeParticle
+draw DrawPrizeParticle
+
++BricksParticle
+particle
+run RunBricksParticle
+draw DrawBricksParticle
+
++GrayBricksParticle
+particle
+run RunBricksParticle
+draw DrawGrayBricksParticle

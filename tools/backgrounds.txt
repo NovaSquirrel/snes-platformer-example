@@ -1,0 +1,15 @@
++Forest
+map BGForest
+size tall
+
++GlassStars
+map BGGlass
+size tall
+
++HillsMountains
+map BGHillsMountains
+size wide
+
++Lake
+map BGLake
+size wide
