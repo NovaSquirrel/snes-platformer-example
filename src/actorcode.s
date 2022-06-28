@@ -312,7 +312,7 @@ StepToTarget:
   lda ParticleTimer,x
   lsr
   and #%110
-  ora #CommonTileBase+$20+OAM_PRIORITY_2
+  add #$4a|OAM_PRIORITY_2|OAM_COLOR_1
   jsl DispParticle16x16
   rts
 .endproc
@@ -323,7 +323,7 @@ StepToTarget:
 .proc RunPoofParticle
   inc ParticleTimer,x
   lda ParticleTimer,x
-  cmp #4*3
+  cmp #4*2
   bne :+
     stz ParticleType,x
   :
