@@ -26,6 +26,10 @@
 VblankHandler:
   seta16
 
+  ; Mark remaining sprites as offscreen
+  ldx OamPtr
+  jsl ppu_clear_oam
+
   ; Pack the second OAM table together into the format the PPU expects
   jsl ppu_pack_oamhi
   .a8 ; (does seta8)

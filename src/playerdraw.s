@@ -33,7 +33,7 @@ CommonTileBase = $40
 .i16
 .export DrawPlayer
 .proc DrawPlayer
-  ldx PlayerOAMIndex
+  ldx #0 ; OAM index
 
   jsr XToPixels
 

@@ -166,7 +166,7 @@ t 0,4 3,1
 t 0,1 1,1
 
 +DirtRight
-t 2,1 4,5
+t 2,1 3,4
 t 4,1 5,1
 
 +SlopeLeft

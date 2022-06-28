@@ -197,7 +197,8 @@ DelayedBlockLoop:
   dex
   bpl DelayedBlockLoop
 
-  stz OamPtr
+  lda #5*4 ; Reserve 5 sprites at the start
+  sta OamPtr
 
   jsl RunPlayer
   jsl AdjustCamera

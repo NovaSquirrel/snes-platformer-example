@@ -42,7 +42,7 @@ CommonTileBase = $40
 .import GetAngle512
 .import ActorTryUpInteraction, ActorTryDownInteraction, ActorBumpAgainstCeiling
 .import InitActorX, UpdateActorSizeX, InitActorY, UpdateActorSizeY
-
+.import SharedEnemyCommon, SharedRemoveIfFar
 
 .a16
 .i16
@@ -52,7 +52,7 @@ CommonTileBase = $40
   lsr
   lsr
   and #2
-  add #(3*2)|OAM_PRIORITY_2
+  add #($28)|OAM_PRIORITY_2|OAM_COLOR_1
   jml DispActor16x16
 .endproc
 
@@ -63,22 +63,41 @@ CommonTileBase = $40
   lda #$10
   jsl ActorWalkOnPlatform
   jsl ActorFall
-  jml PlayerActorCollisionHurt
+  jml SharedEnemyCommon
 .endproc
 
 .i16
 .export DrawMovingPlatform
 .proc DrawMovingPlatform
-  rtl
-;  lda #$40|OAM_PRIORITY_2
-;  sta SpriteTileBase
-;  lda #.loword(Platform)
-;  sta DecodePointer
-;  jml DispActorMetaRight
+  ; Save the direction and change it
+  lda ActorDirection,x
+  pha
+  and #$ff00           ; Clear the direction bit
+  sta ActorDirection,x
 
-;Platform:
-;  Row8x8   -12,0,  $00, $10, $10, $01
-;  EndMetasprite
+  ; Save the X position and change it
+  lda ActorPX,x
+  pha
+  sub #8*16
+  sta ActorPX,x
+
+  lda #($48)|OAM_PRIORITY_2|OAM_COLOR_1
+  jsl DispActor16x16
+
+  lda ActorPX,x
+  add #16*16
+  sta ActorPX,x
+
+  inc ActorDirection,x ; Draw flipped
+  lda #($48)|OAM_PRIORITY_2|OAM_COLOR_1
+  jsl DispActor16x16
+
+  ; Restore the X position and direction
+  pla
+  sta ActorPX,x
+  pla
+  sta ActorDirection,x
+  rtl
 .endproc
 
 ; Move a moving platform back and forth (or at least move ActorVX back and forth)
@@ -195,8 +214,7 @@ StepToTarget:
   lsr
   lsr
   and #2
-  add #2*3
-  ora #OAM_PRIORITY_2
+  add #$20|OAM_PRIORITY_2|OAM_COLOR_1
   jml DispActor16x16
 .endproc
 
@@ -210,7 +228,7 @@ StepToTarget:
 
   jsl ActorFall
 
-  jml PlayerActorCollisionHurt
+  jml SharedEnemyCommon
 .endproc
 
 .a16
@@ -221,8 +239,7 @@ StepToTarget:
   lsr
   lsr
   and #2
-  add #2*3
-  ora #OAM_PRIORITY_2
+  add #$60|OAM_PRIORITY_2|OAM_COLOR_2
   jml DispActor16x16
 .endproc
 
@@ -230,13 +247,14 @@ StepToTarget:
 .i16
 .export RunJumper
 .proc RunJumper
-  lda #20
-  jsl ActorWalk
-  jsl ActorAutoBump
-
+  jsl ActorLookAtPlayer
   jsl ActorFall
+  bcc :+
+    lda #.loword(-$50)
+    sta ActorVY,x
+  :
 
-  jml PlayerActorCollisionHurt
+  jml SharedEnemyCommon
 .endproc
 
 .a16
@@ -247,8 +265,7 @@ StepToTarget:
   lsr
   lsr
   and #2
-  add #2*3
-  ora #OAM_PRIORITY_2
+  add #$40|OAM_PRIORITY_2|OAM_COLOR_1
   jml DispActor16x16
 .endproc
 
@@ -262,7 +279,7 @@ StepToTarget:
 
   jsl ActorFall
 
-  jml PlayerActorCollisionHurt
+  jml SharedEnemyCommon
 .endproc
 
 
@@ -272,14 +289,15 @@ StepToTarget:
 .proc RunEnemyBullet
   jsr ActorExpire
   jsl ActorApplyXVelocity  
-  jml PlayerActorCollisionHurt
+  jsl PlayerActorCollisionHurt
+  jml SharedRemoveIfFar
 .endproc
 
 .a16
 .i16
 .export DrawEnemyBullet
 .proc DrawEnemyBullet
-  lda #12+OAM_PRIORITY_2
+  lda #$26|OAM_PRIORITY_2|OAM_COLOR_1
   jml DispActor8x8
 .endproc
 
@@ -343,7 +361,12 @@ StepToTarget:
 .i16
 .export DrawPrizeParticle
 .proc DrawPrizeParticle
-  lda #CommonTileBase+$28+OAM_PRIORITY_2
+  lda ParticleTimer,x
+  lsr
+  lsr
+  lsr
+  and #3
+  add #$66|OAM_PRIORITY_2|OAM_COLOR_2
   jsl DispParticle8x8
   rts
 .endproc
@@ -352,12 +375,8 @@ StepToTarget:
 .i16
 .export RunPrizeParticle
 .proc RunPrizeParticle
-  lda ParticlePX,x
-  add ParticleVX,x
-  sta ParticlePX,x
-
   lda ParticleVY,x
-  add #4
+  add #2
   sta ParticleVY,x
   add ParticlePY,x
   sta ParticlePY,x

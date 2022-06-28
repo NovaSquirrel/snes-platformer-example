@@ -30,13 +30,13 @@ size 8x8
 essential
 run RunMovingPlatformHorizontal
 draw DrawMovingPlatform
-size 32x8
+size 32x12
 
 +MovingPlatformVertical
 essential
 run RunMovingPlatformVertical
 draw DrawMovingPlatform
-size 32x8
+size 32x12
 
 +PlayerProjectile
 run RunPlayerProjectile

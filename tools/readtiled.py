@@ -126,7 +126,25 @@ class TiledMap():
 						width   = int(sprite.attrib['width'])
 						height  = int(sprite.attrib['height'])
 						tile    = identify_gid(gid)
-						data = (tile, int(sprite.attrib['x'])//16, int(sprite.attrib['y'])//16, xflip, yflip)
+						properties = {}
+
+						# Read the properties if they're there
+						if len(sprite) != 0:
+							assert sprite[0].tag == 'properties'
+
+							for p in sprite[0]:
+								assert p.tag == 'property'
+								name = p.attrib['name'].lower()
+								type = 'string'
+								value = p.attrib['value']
+								if type == 'bool':
+									properties[name] = value == 'true'
+								elif type == 'int':
+									properties[name] = int(value)
+								elif type == 'string' and value != '':
+									properties[name] = value
+						# Pack it up into a tuple
+						data = (tile, int(sprite.attrib['x'])//16, int(sprite.attrib['y'])//16, xflip, yflip, properties)
 						actor_list.append(data)
 				elif e.attrib['name'].lower() == 'meta':
 					for cmd in e:

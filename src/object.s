@@ -103,10 +103,11 @@ CallDraw:
   jml [0]
 .endproc
 
-.export SharedEnemyNormal, SharedRemoveIfFar
+.export SharedEnemyCommon, SharedRemoveIfFar
 .a16
 .i16
-SharedEnemyNormal:
+SharedEnemyCommon:
+  jsl PlayerActorCollisionHurt
   jsl ActorGetShot
 SharedRemoveIfFar:
   lda ActorPX,x
@@ -117,7 +118,7 @@ SharedRemoveIfFar:
   bcc @Good
   jsl ActorSafeRemoveX
 @Good:
-  rts
+  rtl
 
 .pushseg
 .segment "C_ParticleCode"

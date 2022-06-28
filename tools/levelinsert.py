@@ -14,11 +14,6 @@ for f in sorted(glob.glob("levels/*.tmx")):
 	compressed_name = os.path.splitext(f)[0]+'.lz4'
 
 	map = TiledMap(f)
-	print(map.map_width)
-	print(map.map_height)
-	print(map.name)
-	print(map.bgcolor)
-
 	outfile.write('.export level_%s\n' % plain_name)
 	outfile.write('level_%s:\n' % plain_name)
 
@@ -35,7 +30,7 @@ for f in sorted(glob.glob("levels/*.tmx")):
 
 	actor_tilesets = {}
 	for actor in sorted(map.actor_list, key=lambda r: r[1]):
-		actor_tile, actor_x, actor_y, actor_xflip, actor_yflip = actor
+		actor_tile, actor_x, actor_y, actor_xflip, actor_yflip, actor_properties = actor
 		tileset_name, tileset_offset = actor_tile
 
 		# Load if the tileset isn't realdy loaded
@@ -43,7 +38,10 @@ for f in sorted(glob.glob("levels/*.tmx")):
 			actor_tilesets[tileset_name] = TiledMapTileset(os.path.dirname(f) + '/' + tileset_name)
 		tileset_data = actor_tilesets[tileset_name].tiles[tileset_offset]
 
-		outfile.write("  .byt %d, %d|%d, Actor::%s, 0\n" % (actor_x, (128 if actor_xflip else 0), actor_y, tileset_data['Name']))
+		if 'extra' in actor_properties:
+			outfile.write("  .byt %d, %d|%d, Actor::%s, (%s)<<4\n" % (actor_x, (128 if actor_xflip else 0), actor_y-1, tileset_data['Name'], actor_properties['extra']))
+		else:
+			outfile.write("  .byt %d, %d|%d, Actor::%s, 0\n" % (actor_x, (128 if actor_xflip else 0), actor_y-1, tileset_data['Name']))
 
 	outfile.write('  .byt 255\n')
 
