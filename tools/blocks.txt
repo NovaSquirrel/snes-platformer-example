@@ -193,37 +193,45 @@ base red_gfx
 palette red_palette
 
 +LockRed
+when Touch, BlockRedLock
 solid
 q 12,0
 
 +KeyRed
+when Touch, BlockRedKey
 q 10,0
 
 base green_gfx
 palette green_palette
 
 +LockGreen
+when Touch, BlockGreenLock
 solid
 q 14,0
 
 +KeyGreen
+when Touch, BlockGreenKey
 q 12,0
 
 base yellow_gfx
 palette yellow_palette
 
 +LockBlue
+when Touch, BlockBlueLock
 solid
 q 14,0
 
 +KeyBlue
+when Touch, BlockBlueKey
 q 12,0
 
 +LockYellow
+when Touch, BlockYellowLock
 solid
 q 10,0
 
 +KeyYellow
+when Touch, BlockYellowKey
 q 8,0
 
 #######################################

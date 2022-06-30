@@ -172,3 +172,5 @@ InventoryLen = 25
 .global SpriteXYOffset
 
 .global DecompressBuffer
+
+.global RedKeys, GreenKeys, BlueKeys, YellowKeys

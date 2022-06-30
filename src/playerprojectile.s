@@ -27,8 +27,7 @@
 .smart
 
 .import ActorBecomePoof, ActorTurnAround, TwoActorCollision, DispActor8x8, DispActor8x8WithOffset, DispActor16x16, ActorExpire
-.import CollideRide, ActorTryUpInteraction, ActorTryDownInteraction, ActorWalk, ActorFall, ActorAutoBump
-.import PlayerActorCollision, ActorGravity, ActorApplyVelocity, ActorApplyXVelocity, PlayerNegIfLeft
+.import PlayerActorCollision, ActorApplyVelocity, ActorApplyXVelocity, PlayerNegIfLeft
 .import DispParticle8x8
 
 .segment "C_ActorData"

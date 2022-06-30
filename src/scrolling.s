@@ -45,7 +45,7 @@ TargetY = 6
   ; (which will happen if they use a spring)
   lda PlayerDrawY
   and #255
-  cmp #64
+  cmp #48
   bcs :+
     lda PlayerCameraTargetY
     sub #64

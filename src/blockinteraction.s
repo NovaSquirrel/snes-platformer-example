@@ -20,10 +20,14 @@
 ; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ; SOFTWARE.
 
+; This file covers code to handle interacting with level blocks
+; in different ways. These interactions are listed in blocks.txt
+
 .include "snes.inc"
 .include "global.inc"
 .include "blockenum.s"
 .include "actorenum.s"
+.include "../audio/gss_enum.s"
 .smart
 
 .segment "C_BlockInteraction"
@@ -242,6 +246,16 @@ Skip:
 .proc GetOneCoin
   ; Don't add coins if you have the maximum amount already
   seta8
+  ; Play the sound effect
+  lda #255
+  sta APU1 ; Volume
+  lda #SoundEffect::coin
+  sta APU2 ; Effect number
+  lda #128
+  sta APU3 ; Pan
+  lda #GSS_Commands::SFX_PLAY|$60
+  sta APU0
+
   lda MoneyAmount+2
   cmp #$09
   bcc OK
@@ -327,48 +341,21 @@ Skip:
 .endproc
 
 .proc BlockBricks
+  seta8
+  ; Play the sound effect
+  lda #255
+  sta APU1 ; Volume
+  lda #SoundEffect::enough
+  sta APU2 ; Effect number
+  lda #128
+  sta APU3 ; Pan
+  lda #GSS_Commands::SFX_PLAY|$60
+  sta APU0
+  seta16
+
   lda #Block::Empty
   jsl ChangeBlock
   jsr PoofAtBlock
-
-  jsr Create
-;  jmp Create
-
-Create:
-  ; Create one facing right
-  jsl FindFreeParticleY
-  bcc :+
-    jsl RandomByte
-    and #15
-    sta ParticleVX,y
-
-    jsr Common
-  :
-
-  ; Create one facing left
-  jsl FindFreeParticleY
-  bcc :+
-    jsl RandomByte
-    and #15
-    eor #$ffff
-    inc a
-    sta ParticleVX,y
-    bra Common
-  :
-  rts
-
-Common:
-  jsl RandomByte
-  and #15
-  add #.loword(-$30)
-  sta ParticleVY,y
-
-  lda #30
-  sta ParticleTimer,y
-
-  lda #Particle::BricksParticle
-  sta ParticleType,y
-  jsr ParticleAtBlock
   rts
 .endproc
 
@@ -396,6 +383,16 @@ Common:
   :
 
   seta8
+  ; Play the sound effect
+  lda #255
+  sta APU1 ; Volume
+  lda #SoundEffect::spring
+  sta APU2 ; Effect number
+  lda #128
+  sta APU3 ; Pan
+  lda #GSS_Commands::SFX_PLAY|$60
+  sta APU0
+
   lda #30
   sta PlayerJumpCancelLock
   sta PlayerJumping
@@ -517,6 +514,108 @@ Exit:
   sta ParticlePY,y
   rts
 .endproc
+
+.a16
+.export BlockRedKey
+.proc BlockRedKey
+  seta8
+  inc RedKeys
+  seta16
+  lda #Block::Empty
+  jsl ChangeBlock
+  rts
+.endproc
+
+.a16
+.export BlockRedLock
+.proc BlockRedLock
+  lda RedKeys
+  beq NoKeys
+  seta8
+  dec RedKeys
+  seta16
+  lda #Block::Empty
+  jsl ChangeBlock
+NoKeys:
+  rts
+.endproc
+
+.a16
+.export BlockGreenKey
+.proc BlockGreenKey
+  seta8
+  inc GreenKeys
+  seta16
+  lda #Block::Empty
+  jsl ChangeBlock
+  rts
+.endproc
+
+.a16
+.export BlockGreenLock
+.proc BlockGreenLock
+  lda GreenKeys
+  beq NoKeys
+  seta8
+  dec GreenKeys
+  seta16
+  lda #Block::Empty
+  jsl ChangeBlock
+NoKeys:
+  rts
+.endproc
+
+.a16
+.export BlockBlueKey
+.proc BlockBlueKey
+  seta8
+  inc BlueKeys
+  seta16
+  lda #Block::Empty
+  jsl ChangeBlock
+  rts
+.endproc
+
+.a16
+.export BlockBlueLock
+.proc BlockBlueLock
+  lda BlueKeys
+  beq NoKeys
+  seta8
+  dec BlueKeys
+  seta16
+  lda #Block::Empty
+  jsl ChangeBlock
+NoKeys:
+  rts
+.endproc
+
+.a16
+.export BlockYellowKey
+.proc BlockYellowKey
+  seta8
+  inc YellowKeys
+  seta16
+  lda #Block::Empty
+  jsl ChangeBlock
+  rts
+.endproc
+
+.a16
+.export BlockYellowLock
+.proc BlockYellowLock
+  lda YellowKeys
+  beq NoKeys
+  seta8
+  dec YellowKeys
+  seta16
+  lda #Block::Empty
+  jsl ChangeBlock
+NoKeys:
+  rts
+.endproc
+
+
 
 .a16
 .i16

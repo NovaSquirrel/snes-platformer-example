@@ -24,6 +24,7 @@
 .include "global.inc"
 .include "blockenum.s"
 .include "actorenum.s"
+.include "../audio/gss_enum.s"
 .smart
 
 .import BlockRunInteractionAbove, BlockRunInteractionBelow
@@ -706,6 +707,17 @@ OfferJumpFromGracePeriod:
     stz JumpGracePeriod
     lda #1
     sta PlayerJumping
+
+    ; Play the sound effect
+    lda #255
+    sta APU1 ; Volume
+    lda #SoundEffect::jump
+    sta APU2 ; Effect number
+    lda #128
+    sta APU3 ; Pan
+    lda #GSS_Commands::SFX_PLAY|$70
+    sta APU0
+
     seta16
     lda #.loword(-$60)
     sta PlayerVY
@@ -725,6 +737,17 @@ OfferJumpFromGracePeriod:
     dec PlayerHealth
     lda #160
     sta PlayerInvincible
+
+
+    ; Play the sound effect
+    lda #255
+    sta APU1 ; Volume
+    lda #SoundEffect::hurt
+    sta APU2 ; Effect number
+    lda #128
+    sta APU3 ; Pan
+    lda #GSS_Commands::SFX_PLAY|$80
+    sta APU0
   :
   plp
   rtl

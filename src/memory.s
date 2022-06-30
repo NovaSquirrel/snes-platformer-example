@@ -203,6 +203,12 @@ LevelZeroWhenLoad_Start:
   DelayedBlockEditTime: .res MaxDelayedBlockEdits*2 ; Time left until the change
 
   PlayerInvincible: .res 1     ; timer for player invincibility
+
+  ; Number of keys
+  RedKeys:    .res 1
+  GreenKeys:  .res 1
+  BlueKeys:   .res 1
+  YellowKeys: .res 1
 LevelZeroWhenLoad_End:
 
   ; For speeding up actor spawning

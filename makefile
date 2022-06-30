@@ -19,7 +19,7 @@ objlist = \
   snesheader init main player memory common renderlevel \
   uploadppu graphics blockdata snesgss_driver \
   scrolling playergraphics blockinteraction palettedata \
-  actordata actorcode object levelload leveldata \
+  actordata actorcode actorshared levelload leveldata \
   sincos_data math lz4 playerdraw playerprojectile blarggapu
 objlistspc = \
   spcheader spcimage musicseq
@@ -138,10 +138,10 @@ $(objdir)/mktables.s: tools/mktables.py
 $(srcdir)/graphics.s: $(srcdir)/graphicsenum.s
 $(objdir)/renderlevel.o: $(srcdir)/actorenum.s
 
-$(objdir)/main.o: $(srcdir)/vblank.s
+$(objdir)/main.o: $(srcdir)/vblank.s $(audiodir)/gss_data.s
 $(objdir)/blockdata.o: $(srcdir)/blockenum.s
-$(objdir)/player.o: $(srcdir)/blockenum.s $(srcdir)/actorenum.s $(srcdir)/blockenum.s
-$(objdir)/object.o: $(srcdir)/blockenum.s
+$(objdir)/player.o: $(srcdir)/blockenum.s $(srcdir)/actorenum.s $(srcdir)/blockenum.s $(audiodir)/gss_data.s
+$(objdir)/actorshared.o: $(srcdir)/blockenum.s
 $(objdir)/levelload.o: $(srcdir)/paletteenum.s $(srcdir)/graphicsenum.s $(srcdir)/blockenum.s
 $(objdir)/leveldata.o: $(srcdir)/paletteenum.s $(srcdir)/graphicsenum.s $(srcdir)/actorenum.s $(srcdir)/blockenum.s
 $(objdir)/actordata.o: $(srcdir)/paletteenum.s $(srcdir)/graphicsenum.s

@@ -1,37 +1,8 @@
-; Only macros; hardware registers are handled in snes.inc
 .feature leading_dot_in_identifiers
 .macpack generic
 .macpack longbranch
 
-; Provide the regular 6502 with INA and DEA
-.ifp02
-.macro ina
-  add #1
-.endmacro
-
-.macro dea
-  sub #1
-.endmacro
-.endif
-
-; Loop macro
-; Times - Number of times to loop ( may be a memory location )
-; Free  - Free memory location to use
-.macro .dj_loop Times, Free
-  .scope
-    DJ_Counter = Free
-    lda Times
-    sta Free
-DJ_Label:
-.endmacro
-.macro .end_djl
-  NextIndex:
-    dec DJ_Counter
-    jne DJ_Label
-  .endscope
-.endmacro
-
-; Swap using X
+; Swap two variables using X
 .macro swapx mema, memb
   ldx mema
   lda memb
@@ -39,7 +10,7 @@ DJ_Label:
   sta mema
 .endmacro
 
-; Swap using Y
+; Swap two variables using Y
 .macro swapy mema, memb
   ldy mema
   lda memb
@@ -47,7 +18,7 @@ DJ_Label:
   sta mema
 .endmacro
 
-; Swap using just A + stack
+; Swap two variables using just A + stack
 .macro swapa mema, memb
   lda mema
   pha
@@ -67,29 +38,13 @@ DJ_Label:
   sta list,y
 .endmacro
 
-; Imitation of z80's djnz opcode.
-; Can be on A, X, Y, or a memory location
-; Label - Label to jump to
-; Reg   - Counter register to use: A,X,Y or memory location
-.macro djnz Label, Reg
-  .if (.match({Reg}, a))
-    dea
-  .elseif (.match({Reg}, x))
-    dex
-  .elseif (.match({Reg}, y))
-    dey
-  .else
-    dec var
-  .endif
-  bne Label
-.endmacro
-
 ; Put a nybble in the ROM, big endian I guess?
 .macro .nyb InpA, InpB
   .byt ( InpA<<4 ) | InpB
 .endmacro
 
-; For making "RTS trick" tables
+; Used for https://www.nesdev.org/wiki/RTS_Trick
+; because the address needs to be the intended address minus one
 .macro .raddr This
   .addr .loword(This-1)
 .endmacro

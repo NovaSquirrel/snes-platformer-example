@@ -22,10 +22,12 @@
 
 .include "snes.inc"
 .include "global.inc"
+.include "../audio/gss_enum.s"
 .smart
 .export main, nmi_handler
 .import RunAllActors, DrawPlayer, DrawPlayerStatus
 .import StartLevel, ResumeLevelFromCheckpoint
+.import GSS_SendCommand, GSS_SendCommandParamX, GSS_LoadSong
 
 .segment "CODE"
 ;;
@@ -83,33 +85,16 @@
   ; the sound CPU is running the IPL (initial program load), which is
   ; designed to receive data from the main CPU through communication
   ; ports at $2140-$2143.  Load a program and start it running.
-.if 0
   jsl spc_boot_apu
   seta8
-  .import GSS_SendCommand, GSS_SendCommandParamX, GSS_LoadSong
   lda #GSS_Commands::INITIALIZE
   jsl GSS_SendCommand
 
-  lda #0
+  lda #Music::test
   jsl GSS_LoadSong
-  seta8
-
-  ldx #0 | ($00<<8) ; volume, channels
-  lda #GSS_Commands::ECHO_VOLUME_CHANNELS
-  jsl GSS_SendCommandParamX	
-  ldx #$df | (4<<8) ; address, delay
-  lda #GSS_Commands::ECHO_ADDRESS_DELAY
-  jsl GSS_SendCommandParamX
-  ldx #28 | ($3f<<8) ; Volume, channels
-  lda #GSS_Commands::ECHO_VOLUME_CHANNELS
-  jsl GSS_SendCommandParamX
-  ldx #0 | ($50<<8) ; FIR set, feedback
-  lda #GSS_Commands::ECHO_FIR_FEEDBACK
-  jsl GSS_SendCommandParamX
 
   lda #GSS_Commands::MUSIC_START
   jsl GSS_SendCommand
-.endif
 
   .a8
   ; Clear palette

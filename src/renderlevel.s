@@ -20,6 +20,10 @@
 ; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ; SOFTWARE.
 
+; This file contains code to draw the 16x16 blocks that levels are made up of.
+; RenderLevelScreens will draw the whoel screen, and the other code handles updating
+; the screen during scrolling.
+
 .include "snes.inc"
 .include "global.inc"
 .include "actorenum.s"
@@ -33,7 +37,7 @@
 .a16
 .i16
 .proc RenderLevelScreens
-  ; Set the correct scroll value
+  ; Calculate a new scroll position based on the player's current position
   lda PlayerPX
   sub #(8*256)
   bcs :+
@@ -68,23 +72,6 @@
   lda RerenderInitEntities
   and #255
   jeq NoInitEntities
-
-  ; Teleports will not erase certain actor types
-  ; in order to avoid letting teleports break things.
-  cmp #RERENDER_INIT_ENTITIES_TELEPORT
-  bne DontPreserveEntities
-    ldx #ActorStart
-  @Loop:
-    jsl ActorSafeRemoveX
-  @Preserve:
-    txa
-    add #ActorSize
-    tax
-    cmp #ProjectileEnd
-    bne @Loop
-    ; Done here, skip over the other clear code
-    bra DidPreserveEntities
-  DontPreserveEntities:
 
   ; Init actors
   ldx #ActorStart
