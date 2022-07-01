@@ -68,7 +68,7 @@ DrawPlayerProjectileTable:
 
   inc ActorTimer,x
   lda ActorTimer,x
-  cmp #20
+  cmp #50
   bne :+
     stz ActorType,x
   :
@@ -78,7 +78,7 @@ DrawPlayerProjectileTable:
 .a16
 .i16
 .proc DrawProjectileBullet
-  lda #CommonTileBase+$2c+OAM_PRIORITY_2
+  lda #$56|OAM_PRIORITY_2|OAM_COLOR_1
   jml DispActor8x8
 .endproc
 

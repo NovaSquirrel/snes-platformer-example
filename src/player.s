@@ -30,6 +30,7 @@
 .import BlockRunInteractionAbove, BlockRunInteractionBelow
 .import BlockRunInteractionSide,  BlockRunInteractionInsideHead
 .import BlockRunInteractionInsideBody
+.import InitActorX
 
 .segment "ZEROPAGE"
 
@@ -72,10 +73,31 @@ MaxSpeedRight = 12
 
   ; Start off an attack
   lda PlayerWantsToAttack
-  beq :+
+  beq NoAttack
     stz PlayerWantsToAttack
-  :
 
+    seta16
+    jsl FindFreeProjectileX
+    bcc :+
+      lda #Actor::PlayerProjectile*2
+      sta ActorType,x
+      jsl InitActorX
+
+      stz ActorProjectileType,x
+      stz ActorTimer,x
+
+      lda PlayerPX
+      sta ActorPX,x
+      lda PlayerPY
+      sub #10*16
+      sta ActorPY,x
+
+      lda #$30
+      jsl PlayerNegIfLeft
+      sta ActorVX,x
+    :
+    seta8
+  NoAttack:
 
   lda ForceControllerTime
   beq :+
@@ -767,5 +789,29 @@ Right:
 Left:
   pla ; Negate
   neg
+  rtl
+.endproc
+
+.a16
+.i16
+.export FindFreeProjectileX
+.proc FindFreeProjectileX
+  phy
+  lda #ProjectileStart
+  clc
+Loop:
+  tax
+  ldy ActorType,x ; Don't care what gets loaded into Y, but it will set flags
+  beq Found
+  adc #ActorSize
+  cmp #ProjectileEnd ; Carry should always be clear at this point
+  bcc Loop
+NotFound:
+  ply
+  clc
+  rtl
+Found:
+  ply
+  sec
   rtl
 .endproc
