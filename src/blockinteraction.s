@@ -215,6 +215,16 @@ Skip:
 
 .proc BlockHeart
   seta8
+  ; Play the sound effect
+  lda #255
+  sta APU1 ; Volume
+  lda #SoundEffect::coin
+  sta APU2 ; Effect number
+  lda #128
+  sta APU3 ; Pan
+  lda #GSS_Commands::SFX_PLAY|$60
+  sta APU0
+
   lda PlayerHealth
   cmp #4
   bcs Full
@@ -230,6 +240,16 @@ Skip:
 
 .proc BlockSmallHeart
   seta8
+  ; Play the sound effect
+  lda #255
+  sta APU1 ; Volume
+  lda #SoundEffect::coin
+  sta APU2 ; Effect number
+  lda #128
+  sta APU3 ; Pan
+  lda #GSS_Commands::SFX_PLAY|$60
+  sta APU0
+
   lda PlayerHealth
   cmp #4
   bcs Full

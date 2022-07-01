@@ -149,7 +149,7 @@ $(objdir)/uploadppu.o: $(palettes) $(srcdir)/paletteenum.s $(srcdir)/graphicsenu
 $(objdir)/blockinteraction.o: $(srcdir)/actorenum.s $(srcdir)/blockenum.s
 $(srcdir)/actordata.s: $(srcdir)/actorenum.s
 $(objdir)/actorcode.o: $(srcdir)/actorenum.s $(srcdir)/blockenum.s
-$(objdir)/playerprojectile.o: $(srcdir)/actorenum.s $(srcdir)/blockenum.s
+$(objdir)/playerprojectile.o: $(srcdir)/actorenum.s $(srcdir)/blockenum.s $(audiodir)/gss_data.s
 
 # Automatically insert graphics into the ROM
 $(srcdir)/graphicsenum.s: $(chr2all) $(chr4all) $(chrXall) $(chr4allbackground) $(chr4_lz4) $(chr2_lz4) tools/gfxlist.txt tools/insertthegfx.py

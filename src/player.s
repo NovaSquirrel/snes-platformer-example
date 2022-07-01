@@ -97,6 +97,16 @@ MaxSpeedRight = 12
       sta ActorVX,x
     :
     seta8
+
+    ; Play the sound effect
+    lda #255
+    sta APU1 ; Volume
+    lda #SoundEffect::shoot
+    sta APU2 ; Effect number
+    lda #128
+    sta APU3 ; Pan
+    lda #GSS_Commands::SFX_PLAY|$70
+    sta APU0
   NoAttack:
 
   lda ForceControllerTime
