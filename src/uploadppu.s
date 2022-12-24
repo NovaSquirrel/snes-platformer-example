@@ -324,6 +324,10 @@ Compressed:
   ldy #2
   jsl DoPaletteUpload
 
+  lda #Palette::Player
+  ldy #8
+  jsl DoPaletteUpload
+
   lda #Palette::Enemy1
   ldy #9
   jsl DoPaletteUpload

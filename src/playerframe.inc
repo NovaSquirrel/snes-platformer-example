@@ -6,8 +6,6 @@
   WALK4
   WALK5
   WALK6
-  WALK7
-  WALK8
   RUN1
   RUN2
   RUN3
@@ -18,6 +16,5 @@
   RUN8
   JUMP
   FALL
-  CLIMB1
-  CLIMB2
+  CLIMB
 .endenum

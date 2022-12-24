@@ -312,7 +312,7 @@ NoFixWalkSpeed:
   jsr TryRightInteraction
   ; Right head
   lda PlayerPY
-  sub #16*23 ;#16*16+14*16 ; Top of the head
+  sub #16*22 ; Top of the head
   tay
   lda SideXPos
   jsr TryRightInteraction
@@ -337,7 +337,7 @@ SkipRight:
   jsr TryLeftInteraction
   ; Left head
   lda PlayerPY
-  sub #16*23 ;#16*16+14*16 ; Top of the head
+  sub #16*22 ; Top of the head
   tay
   lda SideXPos
   jsr TryLeftInteraction

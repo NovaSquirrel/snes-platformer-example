@@ -13,7 +13,7 @@ BG1CHRBase = $0000
 BG2CHRBase = $4000
 BG3CHRBase = $4000
 
-PlayerHeight = 16*16+14*16
+PlayerHeight = 28*16
 PlayerCollideWidth = 8*16
 
 ; ------------------------------------

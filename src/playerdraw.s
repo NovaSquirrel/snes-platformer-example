@@ -139,7 +139,7 @@ HaveY:
 
     lda #OAM_XFLIP>>8
   :
-  ora #>(OAM_PRIORITY_2|OAM_COLOR_1) ; priority
+  ora #>(OAM_PRIORITY_2|OAM_COLOR_0) ; priority
   sta OAM_ATTR+(4*0),x
   sta OAM_ATTR+(4*1),x
   sta OAM_ATTR+(4*2),x
@@ -173,17 +173,36 @@ HaveY:
     beq @NotRunning
       lda framecount
       lsr
-      and #7
+      and #7 ; 8 frame animation
       add #PlayerFrame::RUN1
       sta PlayerFrame
       bra NoWalkAnimation
     @NotRunning:
 
+    ; The walk animation is 6 frames long, which isn't a good power of 2,
+    ; so use the divider to divide by 6 in a lazy way and use the remainder
+    ; as the frame number. Ideally you'd probably want to set up some sort of
+    ; animation system that can handle non-power-of-2 animations.
     lda framecount
+    sta CPUNUM
+    lda framecount+1
+    sta CPUNUMHI
+    lda #24
+    sta CPUDEN
+
+    ; Wait for the division to happen
+    nop ; 2
+    nop ; 4
+    nop ; 6
+    nop ; 8
+    nop ; 10
+    nop ; 12
+    nop ; 14
+
+    lda CPUREM
     lsr
     lsr
-    and #7
-    inc a
+    inc a ; Go past IDLE and go into WALK1
     sta PlayerFrame 
   NoWalkAnimation:
 
@@ -200,12 +219,7 @@ HaveY:
 
   lda PlayerOnLadder
   beq OffLadder
-    lda retraces
-    lsr
-    lsr
-    lsr
-    and #1
-    add #PlayerFrame::CLIMB1
+    lda #PlayerFrame::CLIMB
     sta PlayerFrame
   OffLadder:
 
