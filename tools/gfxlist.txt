@@ -1,6 +1,6 @@
 0000 SolidTiles
-0200 GreenBrown
-0e00 YellowBlue
-1600 Red
-c400 Enemy
-cc00 Enemy2
+0100 GreenBrown
+0700 YellowBlue
+0b00 Red
+6200 Enemy
+6600 Enemy2

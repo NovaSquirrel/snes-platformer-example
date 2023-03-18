@@ -1,10 +1,10 @@
 # Solid colors, 1 row   --> 512*1 -->  512 | $0000
-# Green/brown is 6 rows --> 512*6 --> 3072 | $0200
-# Yellow/blue is 4 rows --> 512*4 --> 2048 | $0e00
-# Red is 2 rows         --> 512*2 --> 1024 | $1600
-alias green_gfx $0200
-alias yellow_gfx $0e00
-alias red_gfx $1600
+# Green/brown is 6 rows --> 512*6 --> 3072 | $0100
+# Yellow/blue is 4 rows --> 512*4 --> 2048 | $0700
+# Red is 2 rows         --> 512*2 --> 1024 | $0b00
+alias green_gfx $0100
+alias yellow_gfx $0700
+alias red_gfx $0b00
 
 alias green_palette  0
 alias yellow_palette 1

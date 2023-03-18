@@ -204,7 +204,7 @@ Found:
   asl
   asl
   asl
-  ora #ForegroundBG>>1
+  ora #ForegroundBG
   sta BlockUpdateAddressTop,y
 
 CalculateRestOfAddress:

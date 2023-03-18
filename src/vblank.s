@@ -60,7 +60,7 @@ VblankHandler:
   sta <DMALEN+$00
   sta <DMALEN+$10
 
-  lda #(SpriteCHRBase+$000)>>1
+  lda #SpriteCHRBase+($000>>1)
   sta PPUADDR
   seta8
   .import PlayerGraphics
@@ -72,7 +72,7 @@ VblankHandler:
   sta COPYSTART
 
   ; Bottom row -------------------
-  ldx #(SpriteCHRBase+$200)>>1
+  ldx #SpriteCHRBase+($200>>1)
   stx PPUADDR
   lda #%00000010
   sta COPYSTART
