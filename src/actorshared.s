@@ -522,7 +522,6 @@ Skip:
   seta16
 
   ; If going upwards, bounce against ceilings
-  stz 0
   lda ActorVY,x
   bmi ActorBumpAgainstCeiling
 
@@ -530,8 +529,8 @@ Skip:
   jsr ActorGetSlopeYPos
   bcc :+
     lda SlopeY
-;    cmp ActorPY,x
-;    bcs :+
+    cmp ActorPY,x
+    bcs :+
     sta ActorPY,x
     stz ActorVY,x
 
@@ -548,9 +547,8 @@ Skip:
   lda ActorPX,x
   jsl ActorTryDownInteraction
   cmp #$4000
-  rol 0
-
-  lda 0
+  lda #0
+  rol
   seta8
   sta ActorOnGround,x
   ; React to touching the ground
