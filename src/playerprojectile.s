@@ -24,7 +24,8 @@
 .include "global.inc"
 .include "actorenum.s"
 .include "blockenum.s"
-.include "../audio/gss_enum.s"
+.include "audio_enum.inc"
+.include "tad-audio.inc"
 .smart
 
 .import ActorBecomePoof, ActorTurnAround, TwoActorCollision, DispActor8x8, DispActor8x8WithOffset, DispActor16x16, ActorExpire
@@ -141,14 +142,8 @@ DefeatAndRemove:
 Defeat:
   seta8
   ; Play the sound effect
-  lda #255
-  sta APU1 ; Volume
-  lda #SoundEffect::hurt
-  sta APU2 ; Effect number
-  lda #128
-  sta APU3 ; Pan
-  lda #GSS_Commands::SFX_PLAY|$50
-  sta APU0
+  lda #SFX::menu_cursor
+  jsl PlaySoundEffect
   seta16
 
   jml ActorBecomePoof

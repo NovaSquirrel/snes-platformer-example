@@ -27,7 +27,8 @@
 .include "global.inc"
 .include "blockenum.s"
 .include "actorenum.s"
-.include "../audio/gss_enum.s"
+.include "audio_enum.inc"
+.include "tad-audio.inc"
 .smart
 
 .segment "C_BlockInteraction"
@@ -216,14 +217,8 @@ Skip:
 .proc BlockHeart
   seta8
   ; Play the sound effect
-  lda #255
-  sta APU1 ; Volume
-  lda #SoundEffect::coin
-  sta APU2 ; Effect number
-  lda #128
-  sta APU3 ; Pan
-  lda #GSS_Commands::SFX_PLAY|$60
-  sta APU0
+  lda #SFX::collect_item
+  jsl PlaySoundEffect
 
   lda PlayerHealth
   cmp #4
@@ -241,14 +236,8 @@ Skip:
 .proc BlockSmallHeart
   seta8
   ; Play the sound effect
-  lda #255
-  sta APU1 ; Volume
-  lda #SoundEffect::coin
-  sta APU2 ; Effect number
-  lda #128
-  sta APU3 ; Pan
-  lda #GSS_Commands::SFX_PLAY|$60
-  sta APU0
+  lda #SFX::collect_item
+  jsl PlaySoundEffect
 
   lda PlayerHealth
   cmp #4
@@ -267,14 +256,8 @@ Skip:
   ; Don't add coins if you have the maximum amount already
   seta8
   ; Play the sound effect
-  lda #255
-  sta APU1 ; Volume
-  lda #SoundEffect::coin
-  sta APU2 ; Effect number
-  lda #128
-  sta APU3 ; Pan
-  lda #GSS_Commands::SFX_PLAY|$60
-  sta APU0
+  lda #SFX::collect_coin
+  jsl PlaySoundEffect
 
   lda MoneyAmount+2
   cmp #$09
@@ -363,14 +346,8 @@ Skip:
 .proc BlockBricks
   seta8
   ; Play the sound effect
-  lda #255
-  sta APU1 ; Volume
-  lda #SoundEffect::enough
-  sta APU2 ; Effect number
-  lda #128
-  sta APU3 ; Pan
-  lda #GSS_Commands::SFX_PLAY|$60
-  sta APU0
+  lda #SFX::brick_break
+  jsl PlaySoundEffect
   seta16
 
   lda #Block::Empty
@@ -404,14 +381,8 @@ Skip:
 
   seta8
   ; Play the sound effect
-  lda #255
-  sta APU1 ; Volume
-  lda #SoundEffect::spring
-  sta APU2 ; Effect number
-  lda #128
-  sta APU3 ; Pan
-  lda #GSS_Commands::SFX_PLAY|$60
-  sta APU0
+  lda #SFX::spring
+  jsl PlaySoundEffect
 
   lda #30
   sta PlayerJumpCancelLock
@@ -540,6 +511,8 @@ Exit:
 .proc BlockRedKey
   seta8
   inc RedKeys
+  lda #SFX::collect_item
+  jsl PlaySoundEffect
   seta16
   lda #Block::Empty
   jsl ChangeBlock
@@ -553,6 +526,8 @@ Exit:
   beq NoKeys
   seta8
   dec RedKeys
+  lda #SFX::menu_select
+  jsl PlaySoundEffect
   seta16
   lda #Block::Empty
   jsl ChangeBlock
@@ -565,6 +540,8 @@ NoKeys:
 .proc BlockGreenKey
   seta8
   inc GreenKeys
+  lda #SFX::collect_item
+  jsl PlaySoundEffect
   seta16
   lda #Block::Empty
   jsl ChangeBlock
@@ -578,6 +555,8 @@ NoKeys:
   beq NoKeys
   seta8
   dec GreenKeys
+  lda #SFX::menu_select
+  jsl PlaySoundEffect
   seta16
   lda #Block::Empty
   jsl ChangeBlock
@@ -590,6 +569,8 @@ NoKeys:
 .proc BlockBlueKey
   seta8
   inc BlueKeys
+  lda #SFX::collect_item
+  jsl PlaySoundEffect
   seta16
   lda #Block::Empty
   jsl ChangeBlock
@@ -603,6 +584,8 @@ NoKeys:
   beq NoKeys
   seta8
   dec BlueKeys
+  lda #SFX::menu_select
+  jsl PlaySoundEffect
   seta16
   lda #Block::Empty
   jsl ChangeBlock
@@ -615,6 +598,8 @@ NoKeys:
 .proc BlockYellowKey
   seta8
   inc YellowKeys
+  lda #SFX::collect_item
+  jsl PlaySoundEffect
   seta16
   lda #Block::Empty
   jsl ChangeBlock

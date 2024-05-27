@@ -22,12 +22,12 @@
 
 .include "snes.inc"
 .include "global.inc"
-.include "../audio/gss_enum.s"
+.include "audio_enum.inc"
+.include "tad-audio.inc"
 .smart
 .export main, nmi_handler
 .import RunAllActors, DrawPlayer, DrawPlayerStatus
 .import StartLevel, ResumeLevelFromCheckpoint
-.import GSS_SendCommand, GSS_SendCommandParamX, GSS_LoadSong
 
 .segment "CODE"
 ;;
@@ -85,18 +85,17 @@
   ; the sound CPU is running the IPL (initial program load), which is
   ; designed to receive data from the main CPU through communication
   ; ports at $2140-$2143.  Load a program and start it running.
-  jsl spc_boot_apu
   seta8
-  lda #GSS_Commands::INITIALIZE
-  jsl GSS_SendCommand
+  setxy16
+  phk
+  plb
 
-  lda #Music::test
-  jsl GSS_LoadSong
+  jsl Tad_Init
 
-  lda #GSS_Commands::MUSIC_START
-  jsl GSS_SendCommand
+  lda #Song::gimo_297
+  jsr Tad_LoadSong
 
-  .a8
+  seta8
   ; Clear palette
   stz CGADDR
   ldx #256
@@ -133,10 +132,17 @@
   plb
   stz framecount
 forever:
-  ; Draw the player to a display list in main memory
-  setaxy16
-  inc framecount
+
+  ; Communicate with the audio driver
+  seta8
+  setxy16
+  phk ; Make sure that DB can access RAM and registers
+  plb
+  jsl Tad_Process
+
   seta16
+
+  inc framecount
 
   ; Update keys
   lda keydown

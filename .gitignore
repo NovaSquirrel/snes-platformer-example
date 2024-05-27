@@ -46,3 +46,7 @@ audio/gss_enum.s
 audio/gss_data.s
 audio/brr/gssbrr.exe
 src/sincos_data.s
+audio/audio_common.bin
+audio/songs/*.bin
+src/audio_enum.inc
+src/audio_incbins.s

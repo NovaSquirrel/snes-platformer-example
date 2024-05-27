@@ -24,7 +24,8 @@
 .include "global.inc"
 .include "blockenum.s"
 .include "actorenum.s"
-.include "../audio/gss_enum.s"
+.include "audio_enum.inc"
+.include "tad-audio.inc"
 .smart
 
 .import BlockRunInteractionAbove, BlockRunInteractionBelow
@@ -99,14 +100,8 @@ MaxSpeedRight = 12
     seta8
 
     ; Play the sound effect
-    lda #255
-    sta APU1 ; Volume
-    lda #SoundEffect::shoot
-    sta APU2 ; Effect number
-    lda #128
-    sta APU3 ; Pan
-    lda #GSS_Commands::SFX_PLAY|$70
-    sta APU0
+    lda #SFX::fire_arrow
+    jsl PlaySoundEffect
   NoAttack:
 
   lda ForceControllerTime
@@ -741,14 +736,8 @@ OfferJumpFromGracePeriod:
     sta PlayerJumping
 
     ; Play the sound effect
-    lda #255
-    sta APU1 ; Volume
-    lda #SoundEffect::jump
-    sta APU2 ; Effect number
-    lda #128
-    sta APU3 ; Pan
-    lda #GSS_Commands::SFX_PLAY|$70
-    sta APU0
+    lda #SFX::jump
+    jsl PlaySoundEffect
 
     seta16
     lda #.loword(-$60)
@@ -770,16 +759,9 @@ OfferJumpFromGracePeriod:
     lda #160
     sta PlayerInvincible
 
-
     ; Play the sound effect
-    lda #255
-    sta APU1 ; Volume
-    lda #SoundEffect::hurt
-    sta APU2 ; Effect number
-    lda #128
-    sta APU3 ; Pan
-    lda #GSS_Commands::SFX_PLAY|$80
-    sta APU0
+    lda #SFX::player_hurt
+    jsl PlaySoundEffect
   :
   plp
   rtl
