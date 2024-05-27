@@ -1,7 +1,6 @@
 *.sfc
 *.sw[a-p]
 *.o
-*.brr
 *~
 *.chrgb
 *.chrsfc
@@ -42,9 +41,6 @@ auto_linker.cfg
 src/itemdata.s
 *.namsfc
 *.sym
-audio/gss_enum.s
-audio/gss_data.s
-audio/brr/gssbrr.exe
 src/sincos_data.s
 audio/audio_common.bin
 audio/songs/*.bin
