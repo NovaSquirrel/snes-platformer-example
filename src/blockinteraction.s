@@ -216,13 +216,13 @@ Skip:
 
 .proc BlockHeart
   seta8
-  ; Play the sound effect
-  lda #SFX::collect_item
-  jsl PlaySoundEffect
-
   lda PlayerHealth
   cmp #4
   bcs Full
+    ; Play the sound effect
+    lda #SFX::collect_item
+    jsl PlaySoundEffect
+
     lda #4
     sta PlayerHealth
     seta16
