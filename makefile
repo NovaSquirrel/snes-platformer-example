@@ -103,7 +103,6 @@ palettes := $(wildcard palettes/*.png)
 variable_palettes := $(wildcard palettes/variable/*.png)
 levels_lz4 := $(patsubst %.tmx,%.lz4,$(wildcard levels/*.tmx))
 levels_bin := $(patsubst %.tmx,%.bin,$(wildcard levels/*.tmx))
-snesgssall := $(wildcard $(audiodir)/*.gsm)
 
 # Background conversion
 # (nametable conversion is implied)
@@ -137,7 +136,7 @@ $(objdir)/levelload.o: $(srcdir)/paletteenum.s $(srcdir)/graphicsenum.s $(srcdir
 $(objdir)/leveldata.o: $(srcdir)/paletteenum.s $(srcdir)/graphicsenum.s $(srcdir)/actorenum.s $(srcdir)/blockenum.s
 $(objdir)/actordata.o: $(srcdir)/paletteenum.s $(srcdir)/graphicsenum.s
 $(objdir)/uploadppu.o: $(palettes) $(srcdir)/paletteenum.s $(srcdir)/graphicsenum.s
-$(objdir)/blockinteraction.o: $(srcdir)/actorenum.s $(srcdir)/blockenum.s
+$(objdir)/blockinteraction.o: $(srcdir)/actorenum.s $(srcdir)/blockenum.s $(srcdir)/audio_enum.inc
 $(srcdir)/actordata.s: $(srcdir)/actorenum.s
 $(objdir)/actorcode.o: $(srcdir)/actorenum.s $(srcdir)/blockenum.s
 $(objdir)/playerprojectile.o: $(srcdir)/actorenum.s $(srcdir)/blockenum.s $(srcdir)/audio_enum.inc

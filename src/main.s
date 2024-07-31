@@ -255,9 +255,8 @@ DelayedBlockLoop:
   sta PPUBRIGHT
   cmp #$0f
   beq :+
-    ina
+    inc LevelFadeIn
   :
-  sta LevelFadeIn
 
   ; Wait for control reading to finish
   lda #$01
