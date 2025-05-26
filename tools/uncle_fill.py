@@ -287,7 +287,7 @@ with open(sys.argv[2], 'w') as f:
 				if code_size:
 					f.write("  ROM%d_code: start = $%x, type = ro, size = $%x, fill = yes;\n" % (bank, start + 0x10000 - code_size, code_size))
 			else:
-				f.write("  ROM%d: start = $%x, type = ro, size = $%x, fill = yes;\n" % (bank, start, bank_max_size))
+				f.write("  ROM%d: start = $%x, type = ro, size = $%x, fill = yes;\n" % (bank, start + 0x8000, bank_max_size))
 		elif nes:
 			f.write("  ROM%d: start = $8000, type = ro, size = $%x, fill = yes, bank=%d;\n" % (bank, bank_max_size, bank))
 		
