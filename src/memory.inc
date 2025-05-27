@@ -21,7 +21,7 @@
 .globalzp PlayerFrame
 .globalzp PlayerDir
 .globalzp PlayerWasRunning
-.global PlayerOnLadder, PlayerInWater
+.global PlayerOnLadder
 .global PlayerOnSlope
 .global PlayerSlopeType
 .global PlayerCameraTargetY
@@ -31,7 +31,6 @@
 .global PlayerInvincible
 .globalzp PlayerWalkLock
 .globalzp PlayerDownTimer
-.global PlayerDownRecently
 .globalzp PlayerJumping
 .globalzp OamPtr
 .globalzp TempVal
@@ -44,8 +43,6 @@
 .global PlayerJumpCancelLock
 .global PlayerWantsToJump
 .global PlayerWantsToAttack
-.global PlayerAccelSpeed
-.global PlayerDecelSpeed
 .global JumpGracePeriod
 .global PlayerRidingSomething
 ; 1 = Riding something normally, 2 = Don't update the PlayerCameraTargetY 
@@ -54,7 +51,6 @@ RIDING_NO_PLATFORM_SNAP = 2
 .global PlayerDrawX
 .global PlayerDrawY
 .global PlayerOAMIndex
-.global HighPriorityOAMIndex
 
 .global ColumnUpdateAddress, ColumnUpdateAddress2
 .global ColumnUpdateBuffer, ColumnUpdateBuffer2
@@ -146,8 +142,6 @@ RERENDER_INIT_ENTITIES_TELEPORT = $80
 
 .global LevelActorBuffer
 
-.global UseTapRun, TapReleaseTimer, TapReleaseButton, IsTapRun
-
 ; Save stuff
 .global MoneyAmount
 
@@ -159,10 +153,6 @@ InventoryLen = 25
 .global YourInventory, LevelInventory, InventoryEnd
 
 .global CheckpointState, CheckpointX, CheckpointY
-
-.global CursorX
-.global CursorY
-.global AutoRepeatTimer
 
 .global SpriteXYOffset
 

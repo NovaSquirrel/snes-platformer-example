@@ -21,7 +21,7 @@
 ; SOFTWARE.
 
 
-; This file mostly contains
+; This file mostly contains generic routines for actors to build their behaviors out of
 
 .include "snes.inc"
 .include "global.inc"

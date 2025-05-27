@@ -33,7 +33,7 @@
 ; Actors are defined in actors.txt and tables are automatically put in actordata.s
 ; via a Python script.
 
-; Most of the actors mostly just call routines from object.s and chain multiple
+; Most of the actors mostly just call routines from actorshared.s and chain multiple
 ; simple behaviors together to get something more complicated.
 
 .include "snes.inc"
@@ -460,22 +460,6 @@ Exit:
   bne :+
     stz ParticleType,x
   :
-  rts
-.endproc
-
-.a16
-.i16
-.export DrawSmokeParticle
-.proc DrawSmokeParticle
-  jsl RandomByte
-  and #$11
-  sta 0
-  jsl RandomByte
-  xba
-  and #OAM_XFLIP|OAM_YFLIP
-  ora 0
-  ora #$26+OAM_PRIORITY_2
-  jsl DispParticle8x8
   rts
 .endproc
 

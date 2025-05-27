@@ -211,11 +211,6 @@ LevelZeroWhenLoad_End:
   ; Multiply by 4 to use it.
   FirstActorOnScreen:     .res 16
 
-
-  CursorX:       .res 2
-  CursorY:       .res 2
-  AutoRepeatTimer: .res 1
-
 GameStateStart:
   YourInventory:    .res InventoryLen*2 ; Type, Amount pairs
   LevelInventory:   .res InventoryLen*2
