@@ -93,7 +93,6 @@ LoadCommon:
 
 .export Tad_Loader_Bin, Tad_Loader_SIZE
 .export Tad_AudioDriver_Bin, Tad_AudioDriver_SIZE
-.export Tad_BlankSong_Bin, Tad_BlankSong_SIZE
 
 CommonAudioData_Bin: .incbin "../audio/audio_common.bin"
 CommonAudioData_SIZE = .sizeof(CommonAudioData_Bin) 
@@ -103,6 +102,3 @@ Tad_Loader_SIZE = .sizeof(Tad_Loader_Bin)
 
 Tad_AudioDriver_Bin: .incbin "../audio/driver/audio-driver.bin"
 Tad_AudioDriver_SIZE = .sizeof(Tad_AudioDriver_Bin)
-
-Tad_BlankSong_Bin: .incbin "../audio/driver/blank-song.bin"
-Tad_BlankSong_SIZE = .sizeof(Tad_BlankSong_Bin)

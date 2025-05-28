@@ -265,8 +265,6 @@ padwait:
   bne padwait
 
   ; Update scroll registers
-  ; ---Primary foreground---
-  seta8
   lda FGScrollXPixels+0
   sta BGSCROLLX
   lda FGScrollXPixels+1
@@ -285,7 +283,6 @@ padwait:
   lda BGScrollYPixels+1
   sta BGSCROLLY+2
 
-  seta8
   lda HDMASTART_Mirror
   sta HDMASTART
 

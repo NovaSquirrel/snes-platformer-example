@@ -58,12 +58,11 @@
 ;; To increase compatibility with existing resource subsystems, `tad-audio.s` does not embed
 ;; the audio driver or audio data into the ROM.
 ;;
-;; The audio driver is divided into 3 files
+;; The audio driver is divided into 2 files
 ;; (see the *Binary Data* section of `tad-audio.s` for more details):
 ;;
 ;;  * `loader.bin` - the custom spc700 loader.  Imported as `Tad_Loader_Bin`, `Tad_Loader_SIZE`.
 ;;  * `audio-driver.bin` - the spc700 audio driver.  Imported as `Tad_AudioDriver_Bin`, `Tad_AudioDriver_SIZE`.
-;;  * `blank-song.bin` - a blank (silent) song.  Imported as `Tad_BlankSong_Bin`, `Tad_BlankSong_SIZE`.
 ;;
 ;; Audio data is loaded using the external callback `LoadAudioData`.  `LoadAudioData` is
 ;; called when *Common Audio Data* or *Song Data* need to be loaded into Audio-RAM.
@@ -91,13 +90,50 @@
 
 
 ;; Maximum pan value (100% to the right)
-MAX_PAN = 128
+TAD_MAX_PAN = 128
 
 ;; Center pan value (default if pan is not specified)
-CENTER_PAN = MAX_PAN / 2
+TAD_CENTER_PAN = TAD_MAX_PAN / 2
 
-;; Minimum tick clock value for the `TadCommand::SET_SONG_TEMPO` command.
-MIN_TICK_CLOCK = 64
+;; Minimum tick clock value for the `TadCommand::SET_SONG_TIMER` command.
+TAD_MIN_TICK_CLOCK = 64
+
+
+;; `Tad_flags` bits
+;;
+;; Unless overridden by `TAD_CUSTOM_DEFAULTS`, the default flags are `PLAY_SONG_IMMEDIATELY`.
+.scope TadFlags
+    ;; If set the *common audio data* will be loaded into Audio-RAM on the next `Tad_LoadSong` call.
+    ;;
+    ;; This flag will be cleared in `Tad_LoadSong`.
+    RELOAD_COMMON_AUDIO_DATA = 1 << 7
+
+    ;; Determines if the song is played immediately after loading into Audio-RAM
+    ;;  * If set, the audio driver will play the song after the next song is loaded into Audio-RAM
+    ;;  * If clear, the audio driver will be paused after the next song is loaded into Audio-RAM
+    PLAY_SONG_IMMEDIATELY = 1 << 6
+
+    ;; If set, the audio driver will reset the global volumes to maximum volume when a song starts.
+    RESET_GLOBAL_VOLUMES_ON_SONG_START = 1 << 5
+.endscope
+
+
+;; Audio Mode
+;;
+;; Unless overridden by `TAD_CUSTOM_DEFAULTS`, the default audio mode is `MONO`.
+.enum TadAudioMode
+    ;; Channels are not panned
+    MONO = 0
+
+    ;; Channels can be panned
+    ;;
+    ;; `set_channel_invert` and `set_echo_invert` instructions will invert both the
+    ;; left AND right channels if the invert-mono flag is set.
+    STEREO = 1
+
+    ;; Channels can be panned and the left or right channels can be individually inverted.
+    SURROUND = 2
+.endenum
 
 
 
@@ -115,18 +151,33 @@ MIN_TICK_CLOCK = 64
     PAUSE_MUSIC_PLAY_SFX = 2
 
     ;; Unpauses the music and sound effect channels.
+    ;;
+    ;; CAUTION: The channels will not output audio until the next key-on event.
     UNPAUSE = 4
 
-    ; SHOULD NOT USE PLAY_SOUND_EFFECT in `queue_command`
-    ; (command queue only holds 1 parameter byte and PLAY_SOUND_EFFECT has 2 parameters)
+    ;; Play a sound effect
+    ;;  * parameter0: sound effect id
+    ;;  * parameter1: pan (0-128) (not bounds checked)
+    ;;
+    ;; The sound-effect might not play if both sound effect channels are active.
+    ;; See the Sound Effects documentation for more details
+    ;;
+    ;; CAUTION: a PLAY_SOUND_EFFECT command has a higher priority than the sound-effect queue.
+    PLAY_SOUND_EFFECT = 6
 
     ;; Stop all active sound effects
     STOP_SOUND_EFFECTS = 8
 
-    ;; Set the main volume
+    ;; Set the main volume (`MVOL` S-DSP registers)
     ;;  * parameter0: signed i8 volume
     ;;
+    ;; Disabled channels will be keyed-off.
+    ;;
     ;; NOTE: The main volume is reset whenever a new song is loaded.
+    ;;
+    ;; CAUTION: Echo volume is separate from main volume.
+    ;; The echo buffer will be unchanged and audible when main-volume is 0.
+    ;; This command is not recommended with songs that use echo.
     SET_MAIN_VOLUME = 10
 
     ;; Enables or disables music channels.
@@ -135,12 +186,45 @@ MIN_TICK_CLOCK = 64
     ;; NOTE: The music channels bitmask is reset whenever a new song is loaded.
     SET_MUSIC_CHANNELS = 12
 
-    ;; Set the song tempo.
-    ;;  * parameter0: The new S-DSP TIMER_0 register value
-    ;;    (MUST be >= MIN_TICK_CLOCK 64, is bounds checked)
+    ;; Set the song tick clock.
+    ;;  * parameter0: The new S-DSP TIMER_0 register value.
+    ;;    64 is fastest, 255 is slow, 0 is slowest.
+    ;;    (MUST be `0 || >= TAD_MIN_TICK_CLOCK 64`, is bounds checked)
     ;;
-    ;; NOTE: The song can still change the tempo.
-    SET_SONG_TEMPO = 14
+    ;; A TIMER_0 register value of 0 is 256 (slowest).
+    ;;
+    ;; CAUTION: The song can still change the song timer.
+    SET_SONG_TIMER = 14
+
+    ;; Set the global music volume
+    ;;  * parameter0: the music volume.
+    ;;    A 255 music-volume will not modify the channel volume.
+    ;;
+    ;; NOTE: If the `TadFlags::RESET_GLOBAL_VOLUMES_ON_SONG_START` flag is set, the global volumes
+    ;; will be reset when a songs starts.
+    ;;
+    ;; CAUTION: This command does not change the echo volume.
+    SET_GLOBAL_MUSIC_VOLUME = 16
+
+    ;; Set the global sound-effect volume
+    ;;  * parameter0: the music volume.
+    ;;    A 255 sfx-volume will not modify the channel volume.
+    ;;
+    ;; NOTE: If the `TadFlags::RESET_GLOBAL_VOLUMES_ON_SONG_START` flag is set, the global volumes
+    ;; will be reset when a songs starts.
+    ;;
+    ;; CAUTION: This command does not change the echo volume.
+    SET_GLOBAL_SFX_VOLUME = 18
+
+    ;; Set the global music and sound-effect volumes
+    ;;  * parameter0: the music volume.
+    ;;  * parameter1: the sound-effect volume.
+    ;;
+    ;; NOTE: If the `TadFlags::RESET_GLOBAL_VOLUMES_ON_SONG_START` flag is set, the global volumes
+    ;; will be reset when a songs starts.
+    ;;
+    ;; CAUTION: This command does not change the echo volume.
+    SET_GLOBAL_VOLUMES = 20
 .endenum
 
 
@@ -155,10 +239,7 @@ MIN_TICK_CLOCK = 64
 ;;  * Loads the audio driver into Audio-RAM
 ;;  * Sets the song to 0 (silence)
 ;;  * Resets variables
-;;  * Sets the flags
-;;      * Sets the *Reload Common Audio Data* flag
-;;      * Sets the *Play Song Immediately* flag
-;;      * Clears the *Stereo* flag (mono output)
+;;  * Initialises `Tad_flags` and `Tad_audioMode`
 ;;  * Queues a common audio data transfer
 ;;
 ;; This function will require multiple frames of execution time.
@@ -228,7 +309,8 @@ MIN_TICK_CLOCK = 64
 ;; MUST NOT be used to send a play-sound-effect command.
 ;;
 ;; IN: A = `TadCommand` value
-;; IN: X = Command parameter (if any). Only the lower 8 bits will be sent to the Audio Driver.
+;; IN: X = First command parameter (if required). Only the lower 8 bits will be sent to the Audio Driver.
+;; IN: Y = Second command parameter (if required). Only the lower 8 bits will be sent to the Audio Driver.
 ;;
 ;; OUT: Carry set if the command was added to the queue
 ;;
@@ -244,7 +326,8 @@ MIN_TICK_CLOCK = 64
 ;; The command queue can only hold 1 command.
 ;;
 ;; IN: A = `TadCommand` value
-;; IN: X = Command parameter (if any). Only the lower 8 bits will be sent to the Audio Driver.
+;; IN: X = First command parameter (if required). Only the lower 8 bits will be sent to the Audio Driver.
+;; IN: Y = Second command parameter (if required). Only the lower 8 bits will be sent to the Audio Driver.
 ;;
 ;; A8
 ;; I unknown
@@ -258,7 +341,7 @@ MIN_TICK_CLOCK = 64
 ;; NOTE: Lower sound effect IDs take priority over higher sound effect IDs.
 ;;
 ;; IN: A = sfx id (as determined by the sound effect export order in the project file)
-;; IN: X = pan (only the lower 8 bits are used.  If `pan > MAX_PAN`, the sound effect will use center pan)
+;; IN: X = pan (only the lower 8 bits are used.  If `pan > TAD_MAX_PAN`, the sound effect will use center pan)
 ;;
 ;; A8
 ;; I unknown
@@ -267,7 +350,7 @@ MIN_TICK_CLOCK = 64
 .import Tad_QueuePannedSoundEffect
 
 
-;; Queue the next sound effect to play with center pan (MAX_PAN/2).
+;; Queue the next sound effect to play with center pan (TAD_MAX_PAN/2).
 ;;
 ;; NOTE: Only 1 sound effect can be played at a time.
 ;; NOTE: Lower sound effect IDs take priority over higher sound effect IDs.
@@ -281,16 +364,17 @@ MIN_TICK_CLOCK = 64
 .import Tad_QueueSoundEffect
 
 
-;; Disables the audio driver, starts the loader and queues a song transfer.
+;; Disables the audio driver, starts the loader and queues a song or common-audio-data transfer.
 ;;
-;; This function will not restart the loader if the loader is loading common audio data.
+;; This subroutine will clear the `TadFlags::RELOAD_COMMON_AUDIO_DATA` flag.
 ;;
-;; CAUTION: The audio driver starts in the paused state if the `PlaySongImmediately` flag is false.
-;;
-;; CAUTION: `Tad_LoadSong` will switch the state to `WAITING_FOR_LOADER`.  `LoadAudioData` will
+;; CAUTION: `Tad_LoadSong` will switch the state to `WAITING_FOR_LOADER_*`.  `LoadAudioData` will
 ;; not be called until `Tad_Process` is called **and** the audio-driver has switched to the loader.
-;; While the state remains `WAITING_FOR_LOADER`, no audio data will be transferred and calling
+;; While the state remains `WAITING_FOR_LOADER_*`, no audio data will be transferred and calling
 ;; `Tad_FinishLoadingData` will not transfer any audio data.
+;;
+;; CAUTION: The audio driver starts in the paused state if the `TadFlags::PLAY_SONG_IMMEDIATELY`
+;; flag is clear when `Tad_Process` receives the ready signal from the loader.
 ;;
 ;; IN: A = 0 - play a blank (silent song)
 ;; IN: A >= 1 - Play song number `A`
@@ -326,6 +410,8 @@ MIN_TICK_CLOCK = 64
 .import Tad_GetSong
 
 
+;; Sets the `TadFlags::RELOAD_COMMON_AUDIO_DATA` flag
+;;
 ;; If this subroutine is called, the *common audio data* will be reloaded into Audio-RAM.
 ;; This will not take effect until the next song is loaded into Audio-RAM.
 ;;
@@ -335,35 +421,7 @@ MIN_TICK_CLOCK = 64
 .import Tad_ReloadCommonAudioData
 
 
-;; Clears the stereo flag.
-;; This will not take effect until the next song is loaded into Audio-RAM.
-;;
-;; A8
-;; I unknown
-;; DB access lowram
-.import Tad_SetMono
-
-
-;; Set the stereo flag.
-;; This will not take effect until the next song is loaded into Audio-RAM.
-;;
-;; A8
-;; I unknown
-;; DB access lowram
-.import Tad_SetStereo
-
-
-;; Reads the mono/stereo flag
-;;
-;; OUT: Carry set if stereo
-;;
-;; A8
-;; I unknown
-;; DB access lowram
-.import Tad_GetStereoFlag
-
-
-;; Sets the `PlaySongImmediately` flag
+;; Sets the `TadFlags::PLAY_SONG_IMMEDIATELY` flag
 ;;
 ;; A8
 ;; I unknown
@@ -371,7 +429,7 @@ MIN_TICK_CLOCK = 64
 .import Tad_SongsStartImmediately
 
 
-;; Clears the `PlaySongImmediately` flag
+;; Clears the `TadFlags::PLAY_SONG_IMMEDIATELY` flag
 ;;
 ;; A8
 ;; I unknown
@@ -379,9 +437,30 @@ MIN_TICK_CLOCK = 64
 .import Tad_SongsStartPaused
 
 
+;; Sets the `TadFlags::RESET_GLOBAL_VOLUMES_ON_SONG_START` flag.
+;;
+;; The global music and sound-effect volumes will be reset when a song starts.
+;;
+;; A8
+;; I unknown
+;; DB access lowram
+.import Tad_GlobalVolumesResetOnSongStart
+
+
+;; Clears the `TadFlags::RESET_GLOBAL_VOLUMES_ON_SONG_START` flag.
+;;
+;; The global music and sound-effect volumes will persist when a song or common-audio-data
+;; is loaded into audio-RAM.
+;;
+;; A8
+;; I unknown
+;; DB access lowram
+.import Tad_GlobalVolumesPersist
+
+
 ;; Sets the number of bytes to transfer to Audio-RAM per `Tad_Process` call.
 ;;
-;; The value will be clamped from `MIN_TRANSFER_PER_FRAME` to `MAX_TRANSFER_PER_FRAME`.
+;; The value will be clamped from `TAD_MIN_TRANSFER_PER_FRAME` to `TAD_MAX_TRANSFER_PER_FRAME`.
 ;;
 ;; IN: X = number of bytes to transfer on every `Tad_Process` call.
 ;;
@@ -428,6 +507,27 @@ MIN_TICK_CLOCK = 64
 ;; Variables
 ;; =========
 
+
+;; TAD flags bitfield.
+;;
+;; Please refer to the flag bits by their name in the `TadFlags` scope.
+;;
+;; CAUTION: Unused `Tad_flags` will be cleared by `Tad_Process`.
+;;
+;; SEE: TadFlags scope
+;;
+;; (TadFlags byte)
+.import Tad_flags
+
+
+;; Mono/Stereo/Surround audio mode.
+;;
+;; Changes to `Tad_audioMode` will not take effect until the next song is loaded into Audio-RAM
+;;
+;; (TadAudioMode enum byte)
+.import Tad_audioMode
+
+
 ;; Sound Effect Queue
 ;; ==================
 ;;
@@ -438,7 +538,7 @@ MIN_TICK_CLOCK = 64
 ;;  * The command queue is empty
 ;;  * `Tad_sfxQueue_sfx != $ff`
 ;;
-;; If `Tad_sfxQueue_pan > MAX_PAN`, then `CENTER_PAN` will be used instead.
+;; If `Tad_sfxQueue_pan > TAD_MAX_PAN`, then `TAD_CENTER_PAN` will be used instead.
 ;;
 ;; After the `play_sound_effect` command (or when a song is loaded), `Tad_sfxQueue_sfx` and
 ;; `Tad_sfxQueue_pan` will be reset to $ff.
@@ -462,7 +562,7 @@ MIN_TICK_CLOCK = 64
 
 ;; The pan value to play `Tad_sfxQueue_sfx` with.
 ;;
-;; If this value is greater than `MAX_PAN`, then `CENTER_PAN` will be used instead.
+;; If this value is greater than `TAD_MAX_PAN`, then `TAD_CENTER_PAN` will be used instead.
 ;;
 ;; (zeropage u8)
 .importzp Tad_sfxQueue_pan
