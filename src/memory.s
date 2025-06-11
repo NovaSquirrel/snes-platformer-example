@@ -123,7 +123,6 @@
   ParticleTimer      = 10
   ParticleVariable   = 12
 
-  NeedLevelReload:       .res 1 ; If set, decode LevelNumber again
   NeedLevelRerender:     .res 1 ; If set, rerender the level again
   RerenderInitEntities:  .res 1 ; If set, init entity lists for next rerender;
                                 ; if $80 (RERENDER_INIT_ENTITIES_TELEPORT), preserve certain entity types
@@ -147,7 +146,6 @@
 
   PlayerDrawX: .res 1
   PlayerDrawY: .res 1
-  PlayerOAMIndex: .res 2
 
   ; Mirrors, for effects
   FGScrollXPixels: .res 2

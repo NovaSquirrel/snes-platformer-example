@@ -151,7 +151,7 @@
   lda #^LevelBuf
   sta LevelBlockPtr+2
 
-  ; Initialize variables related to optimizations
+  ; You'll want to add some sort of system for loading different levels
   .import level_demo
   lda #<level_demo
   sta LevelHeaderPointer+0

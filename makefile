@@ -130,7 +130,7 @@ $(objdir)/renderlevel.o: $(srcdir)/actorenum.s
 
 $(objdir)/main.o: $(srcdir)/vblank.s $(srcdir)/audio_enum.inc
 $(objdir)/blockdata.o: $(srcdir)/blockenum.s
-$(objdir)/player.o: $(srcdir)/blockenum.s $(srcdir)/actorenum.s $(srcdir)/blockenum.s $(srcdir)/audio_enum.inc
+$(objdir)/player.o: $(srcdir)/blockenum.s $(srcdir)/actorenum.s $(srcdir)/audio_enum.inc
 $(objdir)/actorshared.o: $(srcdir)/blockenum.s
 $(objdir)/levelload.o: $(srcdir)/paletteenum.s $(srcdir)/graphicsenum.s $(srcdir)/blockenum.s
 $(objdir)/leveldata.o: $(srcdir)/paletteenum.s $(srcdir)/graphicsenum.s $(srcdir)/actorenum.s $(srcdir)/blockenum.s
@@ -163,7 +163,7 @@ $(objdir)/leveldata.o: $(levels_lz4) $(levels_bin) $(srcdir)/leveldata.s $(srcdi
 levels/%.lz4: levels/%.bin
 	$(lz4_compress) $(lz4_flags) $< $@
 	@touch $@
-levels/%.bin: levels/%.tmx tools/levelconvert.py
+levels/%.bin: levels/%.tmx tools/levelconvert.py tools/blocks.txt
 	$(PY) tools/levelconvert.py $< $@
 
 $(srcdir)/sincos_data.s: tools/makesincos.py
@@ -180,20 +180,23 @@ $(imgdir2)/%.chrgb: $(imgdir2)/%.png
 	$(PY) tools/pilbmp2nes.py --planes=0,1 $< $@
 $(imgdir2)/lz4/%.chrgb: $(imgdir2)/lz4/%.png
 	$(PY) tools/pilbmp2nes.py --planes=0,1 $< $@
+$(imgdir2)/lz4/%.chrgb.lz4: tilesets2/lz4/%.chrgb
+	$(lz4_compress) $(lz4_flags) $< $@
+	@touch $@
+
 $(imgdir4)/%.chrsfc: $(imgdir4)/%.png
 	$(PY) tools/pilbmp2nes.py "--planes=0,1;2,3" $< $@
+$(imgdir4)/lz4/%.chrsfc: $(imgdir4)/lz4/%.png
+	$(PY) tools/pilbmp2nes.py "--planes=0,1;2,3" $< $@
+$(imgdir4)/lz4/%.chrsfc.lz4: tilesets4/lz4/%.chrsfc
+	$(lz4_compress) $(lz4_flags) $< $@
+	@touch $@
 
 $(imgdirX)/%.chr: $(imgdirX)/%.txt $(imgdirX)/%.png
 	$(PY) tools/pilbmp2nes.py "--flag-file" $^ $@
-
-$(imgdir4)/lz4/%.chrsfc: $(imgdir4)/lz4/%.png
-	$(PY) tools/pilbmp2nes.py "--planes=0,1;2,3" $< $@
-
-
-tilesets4/lz4/%.chrsfc.lz4: tilesets4/lz4/%.chrsfc
-	$(lz4_compress) $(lz4_flags) $< $@
-	@touch $@
-tilesets2/lz4/%.chrgb.lz4: tilesets2/lz4/%.chrgb
+$(imgdirX)/lz4/%.chr: $(imgdirX)/%.txt $(imgdirX)/%.png
+	$(PY) tools/pilbmp2nes.py "--flag-file" $^ $@
+$(imgdirX)/lz4/%.chr.lz4: tilesetsX/lz4/%.chr
 	$(lz4_compress) $(lz4_flags) $< $@
 	@touch $@
 

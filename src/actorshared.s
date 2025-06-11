@@ -346,7 +346,6 @@ Left:
 .endproc
 
 ; Look up the block at a coordinate and run the interaction routine it has, if applicable
-; Will try the second layer if the first is not solid
 ; A = X coordinate, Y = Y coordinate
 .export ActorTryUpInteraction
 .import BlockRunInteractionActorTopBottom
@@ -363,7 +362,6 @@ Left:
 .endproc
 
 ; Look up the block at a coordinate and run the interaction routine it has, if applicable
-; Will try the second layer if the first is not solid or solid on top
 ; A = X coordinate, Y = Y coordinate
 .export ActorTryDownInteraction
 .proc ActorTryDownInteraction

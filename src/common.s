@@ -304,16 +304,6 @@ Exit:
   rtl
 .endproc
 
-.a16
-.export GetBlockXCoord_Vertical
-.proc GetBlockXCoord_Vertical
-  ; 00xxxxxyyyyyyyy0
-  lda LevelBlockPtr ; Get level column
-  lsr
-  and #%11111 * 256
-  rtl
-.endproc
-
 ; Get the row number of LevelBlockPtr
 .a16
 .proc GetBlockY
@@ -329,17 +319,6 @@ Exit:
   lda LevelBlockPtr ; Get level row
   lsr
   and #31
-  xba
-  rtl
-.endproc
-
-.a16
-.export GetBlockYCoord_Vertical
-.proc GetBlockYCoord_Vertical
-  ; 00xxxxxyyyyyyyy0
-  lda LevelBlockPtr ; Get level row
-  lsr
-  and #255
   xba
   rtl
 .endproc

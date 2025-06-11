@@ -7,8 +7,6 @@
 .global   OldScrollX, OldScrollY
 .globalzp LevelBlockPtr
 .globalzp BlockFlag
-.globalzp BlockRealX
-.globalzp BlockRealY
 .globalzp BlockTemp
 
 .globalzp PlayerPX
@@ -50,7 +48,6 @@ RIDING_NO_PLATFORM_SNAP = 2
 
 .global PlayerDrawX
 .global PlayerDrawY
-.global PlayerOAMIndex
 
 .global ColumnUpdateAddress, ColumnUpdateAddress2
 .global ColumnUpdateBuffer, ColumnUpdateBuffer2
@@ -120,7 +117,6 @@ ParticleLen = 20
 .globalzp ParticleTimer
 .globalzp ParticleVariable
 
-.global NeedLevelReload
 .global NeedLevelRerender
 
 RERENDER_INIT_ENTITIES_TELEPORT = $80

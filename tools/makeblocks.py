@@ -44,7 +44,7 @@ for line in text:
 		# Reset to prepare for the new block
 		priority = False
 		block = {"name": line[1:], "solid": False, "solid_top": False, \
-		  "tiles": [], "interaction": {}, "interaction_set": 0, "class": "None", "autotile": None}
+		  "tiles": [], "interaction": {}, "interaction_set": 0, "class": "None"}
 		continue
 	word, arg = separateFirstWord(line)
 	# Miscellaneous directives
@@ -77,9 +77,6 @@ for line in text:
 		for i in arg[0]:
 			block["interaction"][i] = arg[1]
 		all_interaction_procs.add(arg[1])
-	elif word == "autotile":
-		block["autotile"] = arg
-		all_interaction_procs.add(arg)
 
 	elif word == "class":
 		block["class"] = arg
