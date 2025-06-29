@@ -41,6 +41,11 @@
 
 PLAYER_WALK_SPEED = 2
 PLAYER_RUN_SPEED = 3
+PLAYER_WALK_ACCELERATION_RATE = 3
+PLAYER_WALK_DECELERATION_RATE = 4
+PLAYER_JUMP_SPEED = -$60
+PLAYER_MAX_GRAVITY = $60
+PLAYER_GRAVITY_RATE = 4
 
 .a16
 .i16
@@ -173,7 +178,7 @@ NotWalkSpeed:
     bcc NotLeft
     cmp #.lobyte(-PLAYER_RUN_SPEED*16-1)
     bcc NotLeft
-:   sub #3 ; Acceleration speed
+:   sub #PLAYER_WALK_ACCELERATION_RATE ; Acceleration speed
     sta PlayerVX
 NotLeft:
 
@@ -192,13 +197,13 @@ NotLeft:
     bcs NotRight
     cmp #PLAYER_RUN_SPEED*16
     bcs NotRight
-:   add #3 ; Acceleration speed
+:   add #PLAYER_WALK_ACCELERATION_RATE ; Acceleration speed
     sta PlayerVX
 NotRight:
 NotWalk:
 
   ; Decelerate
-  lda #4
+  lda #PLAYER_WALK_DECELERATION_RATE
   sta Temp
 
   ; Don't decelerate if pushing in the direction you're moving
@@ -251,7 +256,7 @@ IsMoving:
    cmp MaxSpeedRight
    beq NoFixWalkSpeed ; If at or less than the max speed, don't fix
    bcc NoFixWalkSpeed
-   sub #4
+   sub #PLAYER_WALK_DECELERATION_RATE
 NoFixWalkSpeed:
    plp
    bpl :+
@@ -347,10 +352,10 @@ SkipLeft:
   ; Vertical movement
   lda PlayerVY
   bmi GravityAddOK
-  cmp #$60
+  cmp #PLAYER_MAX_GRAVITY
   bcs SkipGravity
 GravityAddOK:
-  add #4
+  add #PLAYER_GRAVITY_RATE
   sta PlayerVY
 SkipGravity:
   add PlayerPY ; Apply the vertical speed
@@ -740,7 +745,7 @@ OfferJumpFromGracePeriod:
     jsl PlaySoundEffect
 
     seta16
-    lda #.loword(-$60)
+    lda #.loword(PLAYER_JUMP_SPEED)
     sta PlayerVY
   :
   rts

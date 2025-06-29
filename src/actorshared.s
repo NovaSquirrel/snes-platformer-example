@@ -26,7 +26,7 @@
 .include "snes.inc"
 .include "global.inc"
 .include "blockenum.s"
-.import ActorRun, ActorDraw, ActorAfterRun, ActorFlags, ActorWidthTable, ActorHeightTable, ActorBank, ActorGraphic, ActorPalette
+.import ActorRun, ActorDraw, ActorAfterRun, ActorFlags, ActorWidthTable, ActorHeightTable, ActorBank
 .import ActorGetShot
 .smart
 
