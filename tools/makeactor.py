@@ -7,7 +7,6 @@ aliases = {}
 actor = None
 all_actors = []
 all_particles = []
-all_owdecorations = []
 all_subroutines = []
 
 # Read and process the file
@@ -20,8 +19,6 @@ def saveActor():
 	# Put it in the appropriate list
 	if actor["particle"]:
 		all_particles.append(actor)
-	elif actor["owdecoration"]:
-		all_owdecorations.append(actor)
 	else:
 		all_actors.append(actor)
 
@@ -33,9 +30,8 @@ for line in text:
 	if line.startswith("+"): # new actor
 		saveActor()
 		# Reset to prepare for the new actor
-		actor = {"name": line[1:], "particle": False, "owdecoration": False, "size": [16, 16],
-			"run": "ActorNothing", "draw": "ActorNothing", "flags": [],
-			"essential": False, "secondary": False}
+		actor = {"name": line[1:], "particle": False, "size": [16, 16],
+			"run": "ActorNothing", "draw": "ActorNothing", "flags": []}
 		continue
 	word, arg = separateFirstWord(line)
 	# Miscellaneous directives
