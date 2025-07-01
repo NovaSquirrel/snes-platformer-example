@@ -202,13 +202,13 @@ $(imgdirX)/lz4/%.chr.lz4: tilesetsX/lz4/%.chr
 
 # Rules for audio
 
-$(srcdir)/audio_enum.inc: $(audiodir)/example-project.terrificaudio
+$(srcdir)/audio_enum.inc: $(audiodir)/example-project.terrificaudio $(TAD_COMPILER)
 	$(TAD_COMPILER) ca65-enums --output $@ $(audiodir)/example-project.terrificaudio
 
-$(audiodir)/audio_common.bin: $(audiodir)/example-project.terrificaudio $(audiodir)/sound-effects.txt $(wildcard $(audiodir)/songs/*.mml)
+$(audiodir)/audio_common.bin: $(audiodir)/example-project.terrificaudio $(audiodir)/sound-effects.txt $(wildcard $(audiodir)/songs/*.mml) $(TAD_COMPILER)
 	$(TAD_COMPILER) common --output $@ $(audiodir)/example-project.terrificaudio
 
-$(patsubst %.mml,%.bin,$(wildcard $(audiodir)/songs/*.mml)): $(audiodir)/songs/*.mml
+$(patsubst %.mml,%.bin,$(wildcard $(audiodir)/songs/*.mml)): $(audiodir)/songs/*.mml $(TAD_COMPILER)
 	$(TAD_COMPILER) song --output $@ $(audiodir)/example-project.terrificaudio $(patsubst %.bin,%.mml, $@)
 
 $(objdir)/audio_incbins.o: $(audiodir)/audio_common.bin $(patsubst %.mml,%.bin,$(wildcard $(audiodir)/songs/*.mml))
