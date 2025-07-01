@@ -33,7 +33,7 @@ for f in sorted(glob.glob("levels/*.tmx")):
 		actor_tile, actor_x, actor_y, actor_xflip, actor_yflip, actor_properties = actor
 		tileset_name, tileset_offset = actor_tile
 
-		# Load if the tileset isn't realdy loaded
+		# Load if the tileset isn't already loaded
 		if tileset_name not in actor_tilesets:
 			actor_tilesets[tileset_name] = TiledMapTileset(os.path.dirname(f) + '/' + tileset_name)
 		tileset_data = actor_tilesets[tileset_name].tiles[tileset_offset]
