@@ -129,7 +129,7 @@ with open(sys.argv[3]) as f:
 
 		# Parse the segment and its options
 		colon = segment.index(':')
-		name = segment[:colon]
+		name = segment[:colon].lstrip()
 		info = {}
 		for params in segment[colon+1:].split(','):
 			key, value = params.split('=')
