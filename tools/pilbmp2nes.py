@@ -193,6 +193,8 @@ def main(argv=None):
         sys.exit(1)
 
     im = Image.open(infilename)
+    if im.mode != "P":
+        sys.exit("This tool only supports images that use indexed color mode (this image's mode is "+im.mode+")")
 
 	# Rearrange rows for the purpose of displaying a 32x32 metasprite out of 16x16 sprites on SNES
     if rearrange16x16:
